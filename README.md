@@ -2,7 +2,6 @@
   <h1>PteroDeploy</h1>
   <p><strong>AI-powered conversational deployment assistant for Minecraft servers</strong></p>
   
-  [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
   [![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
   [![React](https://img.shields.io/badge/react-18.0+-61dafb.svg)](https://reactjs.org/)
   [![Docker](https://img.shields.io/badge/docker-ready-2496ed.svg)](https://www.docker.com/)
