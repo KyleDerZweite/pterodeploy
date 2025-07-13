@@ -1,178 +1,236 @@
-<div align="center">
-  <h1>PteroDeploy</h1>
-  <p><strong>AI-powered conversational deployment assistant for Minecraft servers</strong></p>
-  
-  [![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-  [![React](https://img.shields.io/badge/react-18.0+-61dafb.svg)](https://reactjs.org/)
-  [![Docker](https://img.shields.io/badge/docker-ready-2496ed.svg)](https://www.docker.com/)
-</div>
+# PteroDeploy 🚀
 
-## Overview
+**AI-powered conversational deployment assistant for Minecraft servers with comprehensive admin management.**
 
-PteroDeploy transforms Minecraft server deployment into an intelligent conversation. Simply provide a modpack URL, and watch as AI orchestrates the entire deployment process with real-time progress visualization.
+PteroDeploy provides an intuitive web interface for deploying and managing Minecraft servers, featuring real-time deployment tracking, pre-configured modpack templates, and a robust user management system.
 
-## Features
+## ✨ Features
 
-- **Conversational UI** - Natural language interaction for deployments
-- **Real-time Progress** - Live status updates and detailed logging
-- **Intelligent Error Handling** - AI-powered error resolution and suggestions
-- **Multiple Sources** - Support for CurseForge, Modrinth, and direct downloads
-- **Deployment History** - Track and review all past deployments
-- **Template System** - Save and reuse successful configurations
+- 🤖 **AI-Powered Interface**: Conversational deployment assistant
+- 👑 **Admin Dashboard**: Complete user management and approval system
+- 🚀 **Real-time Tracking**: Live deployment progress with Socket.IO
+- 📋 **Modpack Templates**: Pre-configured server templates (All The Mods, RLCraft, SkyFactory, etc.)
+- 🔐 **Secure Authentication**: JWT-based auth with role-based access control
+- 📱 **Modern UI**: Responsive React interface with dark/light themes
+- 🛡️ **Multi-level Admin Access**: Web dashboard, database GUI, and emergency CLI
 
-## Quick Start
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
+
+### Installation
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/pterodeploy.git
+git clone <repository-url>
 cd pterodeploy
 
-# Start with Docker Compose
-docker-compose up -d
+# Install all dependencies
+npm run install:all
 
-# Access the application
-open http://localhost:3000
-Prerequisites
+# Start both services
+npm run dev
+```
 
-Docker & Docker Compose
-Pterodactyl Panel (v1.11+)
-OpenAI/Anthropic API key
+The application will be available at:
+- **Frontend**: http://localhost:5173
+- **Backend API**: http://localhost:3001
 
-Architecture
-mermaidgraph LR
-    A[React Frontend] -->|WebSocket| B[FastAPI Backend]
-    B --> C[Redis Queue]
-    C --> D[Worker Pool]
-    D --> E[Pterodactyl API]
-    B --> F[SQLite/PostgreSQL]
-    D --> G[AI Provider]
+## 👥 User Management
 
-Documentation
+### First-Time Setup
 
-Installation Guide
-Configuration
-API Reference
-Development Setup
+1. **First User Registration**: The first person to register automatically becomes an admin
+2. **Subsequent Users**: All other registrations require admin approval
 
-Contributing
-We welcome contributions! Please see our Contributing Guide for details.
+### Admin Access
 
-License
-This project is licensed under the Apache 2.0 - see the LICENSE file for details.
+Once logged in as an admin, you'll see an "Admin Dashboard" option in the sidebar where you can:
+- ✅ Approve/reject user registrations
+- 👑 Promote users to admin
+- 📊 View system statistics
+- 🗑️ Delete user accounts
+- 📋 Monitor user activity
 
-Acknowledgments
+## 🛠️ Admin Tools
 
-Pterodactyl Panel for the amazing server management platform
-The Minecraft modding community for inspiration
+### 1. Web Admin Dashboard
+Navigate to `/admin` after logging in as an admin for the full management interface.
 
+### 2. Database GUI (Prisma Studio)
+```bash
+cd backend
+npx prisma studio
+# Opens at http://localhost:5555
+```
 
-## Project Structure
+### 3. Emergency CLI Tool
+For direct server access when locked out:
+
+```bash
+cd backend
+
+# List all users
+node admin-cli.js list-users
+
+# Approve a pending user
+node admin-cli.js approve username
+
+# Promote user to admin
+node admin-cli.js make-admin username
+
+# Create emergency admin
+node admin-cli.js create-admin newadmin secretpassword
+
+# Reset user password
+node admin-cli.js reset-password username newpassword
+
+# Show all commands
+node admin-cli.js --help
+```
+
+## 🚦 User Registration Flow
+
+1. **New User Registers** → Status: `pending`
+2. **Admin Reviews** → Approve/Reject via dashboard or CLI
+3. **User Can Login** → Only after approval
+
+### User Status Types
+- **Pending** ⏳: Awaiting admin approval
+- **Approved** ✅: Can access the system  
+- **Rejected** ❌: Access denied
+
+## 🎮 Using PteroDeploy
+
+### For Regular Users
+1. Register an account and wait for admin approval
+2. Login and browse available modpack templates
+3. Start a new deployment with your chosen modpack
+4. Monitor progress in real-time via the dashboard
+5. View deployment history and active servers
+
+### For Admins
+1. Access the admin dashboard from the sidebar
+2. Review and approve new user registrations
+3. Monitor system statistics and user activity
+4. Manage user roles and permissions
+5. Use CLI tools for emergency access
+
+## 🔧 Development Commands
+
+```bash
+# Development
+npm run dev              # Run both services
+npm run dev:backend      # Backend only (port 3001)
+npm run dev:frontend     # Frontend only (port 5173)
+
+# Database
+npm run db:generate      # Generate Prisma client
+npm run db:migrate       # Run migrations
+npm run db:studio        # Open database GUI
+
+# Build
+npm run build            # Build both services
+npm run build:backend    # Backend TypeScript compilation
+npm run build:frontend   # Frontend Vite build
+
+# Linting
+cd frontend && npm run lint
+```
+
+## 🏗️ Technology Stack
+
+**Backend**
+- Node.js + TypeScript + Express.js
+- SQLite + Prisma ORM
+- Socket.IO for real-time updates
+- JWT authentication with bcrypt
+- Helmet + CORS for security
+
+**Frontend**  
+- React 18 + TypeScript + Vite
+- Tailwind CSS + shadcn/ui components
+- Zustand for state management
+- React Router v6 with protected routes
+- React Hook Form + Zod validation
+
+## 📁 Project Structure
+
+```
 pterodeploy/
-├── .github/
-│   ├── workflows/
-│   │   ├── ci.yml
-│   │   └── release.yml
-│   └── ISSUE_TEMPLATE/
-│       ├── bug_report.md
-│       └── feature_request.md
-├── backend/
-│   ├── app/
-│   │   ├── init.py
-│   │   ├── main.py
-│   │   ├── config.py
-│   │   ├── api/
-│   │   │   ├── init.py
-│   │   │   ├── auth.py
-│   │   │   ├── deployments.py
-│   │   │   └── websocket.py
-│   │   ├── core/
-│   │   │   ├── init.py
-│   │   │   ├── security.py
-│   │   │   ├── database.py
-│   │   │   └── redis.py
-│   │   ├── models/
-│   │   │   ├── init.py
-│   │   │   ├── user.py
-│   │   │   └── deployment.py
-│   │   ├── services/
-│   │   │   ├── init.py
-│   │   │   ├── ai_service.py
-│   │   │   ├── pterodactyl_service.py
-│   │   │   └── deployment_orchestrator.py
-│   │   └── utils/
-│   │       ├── init.py
-│   │       └── validators.py
-│   ├── tests/
-│   ├── alembic/
-│   ├── requirements.txt
-│   └── Dockerfile
-├── frontend/
+├── backend/                 # Express.js API server
 │   ├── src/
-│   │   ├── app/
-│   │   │   ├── layout.tsx
-│   │   │   ├── page.tsx
-│   │   │   └── globals.css
-│   │   ├── components/
-│   │   │   ├── ui/
-│   │   │   ├── chat/
-│   │   │   ├── deployment/
-│   │   │   └── layout/
-│   │   ├── lib/
-│   │   │   ├── api.ts
-│   │   │   ├── websocket.ts
-│   │   │   └── utils.ts
-│   │   ├── hooks/
-│   │   │   ├── useWebSocket.ts
-│   │   │   └── useAuth.ts
-│   │   └── store/
-│   │       ├── index.ts
-│   │       └── slices/
-│   ├── public/
-│   ├── package.json
-│   ├── next.config.js
-│   ├── tailwind.config.ts
-│   └── Dockerfile
-├── docs/
-│   ├── installation.md
-│   ├── configuration.md
-│   ├── api.md
-│   └── development.md
-├── scripts/
-│   ├── setup.sh
-│   └── test.sh
-├── docker-compose.yml
-├── docker-compose.dev.yml
-├── .env.example
-├── .gitignore
-├── LICENSE
-├── README.md
-└── CONTRIBUTING.md
+│   │   ├── routes/         # API endpoints (auth, admin, deployments)
+│   │   ├── middleware/     # Authentication middleware
+│   │   ├── socket/         # Socket.IO handlers
+│   │   └── utils/          # Utilities and database seeding
+│   ├── prisma/             # Database schema and migrations
+│   └── admin-cli.js        # Emergency admin CLI tool
+├── frontend/               # React application
+│   ├── src/
+│   │   ├── components/     # UI components (shadcn/ui)
+│   │   ├── pages/          # Page components including admin
+│   │   ├── contexts/       # React contexts (auth, socket)
+│   │   ├── stores/         # Zustand stores
+│   │   └── lib/           # Utilities and API client
+├── docs/                   # Project documentation
+└── scripts/               # Utility scripts
+```
 
-## Key Configuration Files
+## 🔒 Security Features
 
-### .env.example
-```env
-# Application
-APP_NAME=PteroDeploy
-APP_ENV=production
-APP_URL=http://localhost:3000
+- **Role-based Access Control**: Admin vs User permissions
+- **JWT Authentication**: Secure token-based auth
+- **Password Hashing**: bcrypt with salt rounds
+- **Protected Routes**: Frontend route protection
+- **Rate Limiting**: API request limiting
+- **CORS Configuration**: Secure cross-origin requests
+- **Emergency CLI Access**: Direct database management for lockout scenarios
 
-# Backend
-BACKEND_PORT=8000
-SECRET_KEY=your-secret-key-here
-DATABASE_URL=sqlite:///./pterodeploy.db
+## 🚨 Troubleshooting
 
-# Redis
-REDIS_URL=redis://localhost:6379
+### Can't Login After Updates
+If you can't login after system updates:
+1. Clear browser localStorage
+2. Use the CLI tool: `node admin-cli.js make-admin yourusername`
+3. Or use Prisma Studio to manually update your user status
 
-# Pterodactyl
-PTERODACTYL_URL=https://panel.example.com
-PTERODACTYL_API_KEY=your-api-key
+### Locked Out of Admin
+Use the emergency CLI tool:
+```bash
+cd backend
+node admin-cli.js create-admin emergency-admin your-secure-password
+```
 
-# AI Provider
-AI_PROVIDER=openai
-OPENAI_API_KEY=your-api-key
+### Database Issues
+```bash
+# Reset database (WARNING: destroys data)
+cd backend
+rm prisma/pterodeploy.db
+npx prisma migrate dev
 
-# Frontend
-NEXT_PUBLIC_API_URL=http://localhost:8000
-NEXT_PUBLIC_WS_URL=ws://localhost:8000
+# Or restore from backup if available
+```
+
+## 📚 Documentation
+
+- **Technical Documentation**: See [CLAUDE.md](CLAUDE.md) for detailed implementation
+- **Project Architecture**: Complete system overview and development guidelines
+- **API Documentation**: RESTful endpoints for auth, admin, deployments, templates
+
+## 🤝 Contributing
+
+1. Review the technical documentation in `CLAUDE.md`
+2. Follow the existing code patterns and TypeScript standards
+3. Test admin functionality with the CLI tools
+4. Ensure new features work with the role-based access system
+
+## 📄 License
+
+[Add your license information here]
+
+---
+
+**Need Help?** Check the admin dashboard, use the CLI tools, or review the technical documentation in `CLAUDE.md`.
