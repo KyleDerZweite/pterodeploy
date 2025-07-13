@@ -3,6 +3,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { useAuthStore } from '@/stores/auth-store';
 import {
   Rocket,
   History,
@@ -10,6 +11,7 @@ import {
   Plus,
   Server,
   Zap,
+  Shield,
 } from 'lucide-react';
 
 const navigationItems = [
@@ -40,6 +42,8 @@ const navigationItems = [
 ];
 
 export function Sidebar() {
+  const { isAdmin } = useAuthStore();
+  
   return (
     <div className="hidden lg:flex h-screen w-64 flex-col border-r bg-card">
       <div className="p-6">
@@ -74,6 +78,27 @@ export function Sidebar() {
               </div>
             </NavLink>
           ))}
+          
+          {isAdmin && (
+            <>
+              <Separator className="my-2" />
+              <NavLink
+                to="/admin"
+                className={({ isActive }) =>
+                  cn(
+                    'flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground',
+                    isActive && 'bg-accent text-accent-foreground'
+                  )
+                }
+              >
+                <Shield className="h-4 w-4" />
+                <div className="flex-1">
+                  <div className="font-medium">Admin Dashboard</div>
+                  <div className="text-xs text-muted-foreground">Manage users and system</div>
+                </div>
+              </NavLink>
+            </>
+          )}
         </nav>
       </ScrollArea>
       

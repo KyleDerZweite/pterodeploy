@@ -23,6 +23,10 @@ router.post('/register', async (req, res) => {
       return res.status(409).json({ error: 'Username already exists' });
     }
 
+    // Check if this is the first user (auto-admin)
+    const userCount = await prisma.user.count();
+    const isFirstUser = userCount === 0;
+
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
@@ -32,21 +36,37 @@ router.post('/register', async (req, res) => {
         username,
         password: hashedPassword,
         email,
+        role: isFirstUser ? 'admin' : 'user',
+        status: isFirstUser ? 'approved' : 'pending',
       },
     });
 
-    // Generate token
-    const token = jwt.sign({ userId: user.id, username: user.username }, JWT_SECRET, {
+    // If not first user, don't auto-login (needs admin approval)
+    if (!isFirstUser) {
+      return res.status(201).json({
+        message: 'Registration successful. Please wait for admin approval before logging in.',
+        requiresApproval: true,
+      });
+    }
+
+    // Generate token for first user (admin)
+    const token = jwt.sign({ 
+      userId: user.id, 
+      username: user.username, 
+      role: user.role 
+    }, JWT_SECRET, {
       expiresIn: '7d',
     });
 
     res.status(201).json({
-      message: 'User created successfully',
+      message: 'Admin account created successfully',
       token,
       user: {
         id: user.id,
         username: user.username,
         email: user.email,
+        role: user.role,
+        status: user.status,
       },
     });
   } catch (error) {
@@ -70,6 +90,15 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
+    // Check if user is approved
+    if (user.status !== 'approved') {
+      if (user.status === 'pending') {
+        return res.status(403).json({ error: 'Account pending admin approval' });
+      } else if (user.status === 'rejected') {
+        return res.status(403).json({ error: 'Account has been rejected by admin' });
+      }
+    }
+
     // Verify password
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
@@ -77,7 +106,11 @@ router.post('/login', async (req, res) => {
     }
 
     // Generate token
-    const token = jwt.sign({ userId: user.id, username: user.username }, JWT_SECRET, {
+    const token = jwt.sign({ 
+      userId: user.id, 
+      username: user.username, 
+      role: user.role 
+    }, JWT_SECRET, {
       expiresIn: '7d',
     });
 
@@ -88,6 +121,8 @@ router.post('/login', async (req, res) => {
         id: user.id,
         username: user.username,
         email: user.email,
+        role: user.role,
+        status: user.status,
       },
     });
   } catch (error) {
@@ -101,7 +136,7 @@ router.get('/me', authenticateToken, async (req, res) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.user.userId },
-      select: { id: true, username: true, email: true, createdAt: true },
+      select: { id: true, username: true, email: true, role: true, status: true, createdAt: true },
     });
 
     if (!user) {

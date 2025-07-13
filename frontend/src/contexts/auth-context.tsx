@@ -28,10 +28,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const register = async (username: string, password: string, email?: string) => {
     try {
       const response = await api.post('/auth/register', { username, password, email });
+      
+      // Check if registration requires approval
+      if (response.data.requiresApproval) {
+        throw new Error(response.data.message);
+      }
+      
+      // Auto-login for first user (admin)
       const { token, user } = response.data;
       setAuth(token, user);
     } catch (error: any) {
-      throw new Error(error.response?.data?.error || 'Registration failed');
+      throw new Error(error.response?.data?.error || error.message || 'Registration failed');
     }
   };
 

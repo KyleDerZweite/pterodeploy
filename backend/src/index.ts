@@ -8,6 +8,7 @@ import rateLimit from 'express-rate-limit';
 import { PrismaClient } from '@prisma/client';
 
 import authRoutes from './routes/auth.js';
+import adminRoutes from './routes/admin.js';
 import deploymentRoutes from './routes/deployments.js';
 import templateRoutes from './routes/templates.js';
 import { setupSocketHandlers } from './socket/handlers.js';
@@ -43,6 +44,7 @@ app.use(limiter);
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api/deployments', deploymentRoutes);
 app.use('/api/templates', templateRoutes);
 

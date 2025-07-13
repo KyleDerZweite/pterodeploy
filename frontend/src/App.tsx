@@ -11,6 +11,7 @@ import { NewDeploymentPage } from '@/pages/new-deployment-page';
 import { DeploymentsPage } from '@/pages/deployments-page';
 import { DeploymentDetailPage } from '@/pages/deployment-detail-page';
 import { TemplatesPage } from '@/pages/templates-page';
+import { AdminPage } from '@/pages/admin-page';
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
                 <Route path="deployments" element={<DeploymentsPage />} />
                 <Route path="deployments/:id" element={<DeploymentDetailPage />} />
                 <Route path="templates" element={<TemplatesPage />} />
+                <Route path="admin" element={<AdminPage />} />
               </Route>
             </Routes>
             <Toaster />
