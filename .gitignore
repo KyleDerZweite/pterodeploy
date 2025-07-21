@@ -37,3 +37,5 @@ coverage/
 *.ini
 archive/
 docs/
+*test_report*
+.knowledge/
